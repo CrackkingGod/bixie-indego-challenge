@@ -27,7 +27,8 @@
     "pg": "^8.7.1",
     "pg-hstore": "^2.3.4",
     "rimraf": "^3.0.2",
-    "sequelize": "^6.6.5"
+    "sequelize": "^6.6.5",
+    "tsc": "^2.0.3"
   },
   "devDependencies": {
     "@types/cron": "^1.7.3",

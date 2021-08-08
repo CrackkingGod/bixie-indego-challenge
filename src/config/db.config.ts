@@ -55,6 +55,9 @@ export const db = new Sequelize(process.env.URI, {
     dialect: 'postgres',
     host: config.development.host,
     logging: false,
+    dialectOptions: {
+        ssl: true,
+    },
     pool: {
         max: 5,
         min: 0,

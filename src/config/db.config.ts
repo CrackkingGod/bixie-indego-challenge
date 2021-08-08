@@ -36,9 +36,17 @@ const sequelizeOptions: any = {
     }
 };
 
+// export const db = new Sequelize(
+//     `${config.development.database}`,
+//     `${config.development.username}`,
+//     `${config.development.password}`,
+//     sequelizeOptions,
+// );
+
 // `${config.development.database}`,
 // `${config.development.username}`,
 // `${config.development.password}`,
+
 export const db = new Sequelize(process.env.URI, {
     database: `${config.development.database}`,
     username: `${config.development.username}`,

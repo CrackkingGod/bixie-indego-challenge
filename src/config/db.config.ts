@@ -56,7 +56,10 @@ export const db = new Sequelize(process.env.URI, {
     host: config.development.host,
     logging: false,
     dialectOptions: {
-        ssl: true,
+        ssl: {
+            require: true,
+            rejectUnauthorized: false // <<<<<<< YOU NEED THIS
+        }
     },
     pool: {
         max: 5,

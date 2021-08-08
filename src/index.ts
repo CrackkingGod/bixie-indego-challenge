@@ -22,8 +22,17 @@ app.use(bodyParser.urlencoded({ extended: true }));
 db.authenticate()
 	.then(() => console.log('Database Connected'))
 	.catch(err => console.log('Error', err));
-// db.sync();
+db.sync();
 
+app.get(`/`, (req: Request, res: Response) => {
+	try {
+		res.status(200).json({
+			status: true,
+		});
+	} catch (error) {
+		res.status(500).send(error);
+	}
+});
 
 app.get(`/api/v1/stations`, async (req: Request, res: Response) => {
 	try {

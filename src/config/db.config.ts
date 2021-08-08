@@ -22,6 +22,7 @@ const config = {
 };
 
 const sequelizeOptions: any = {
+    ssl: true,
     dialect: 'postgres',
     host: config.development.host,
     logging: false,
@@ -35,9 +36,20 @@ const sequelizeOptions: any = {
     }
 };
 
-export const db = new Sequelize(
-    `${config.development.database}`,
-    `${config.development.username}`,
-    `${config.development.password}`,
-    sequelizeOptions,
-);
+// `${config.development.database}`,
+// `${config.development.username}`,
+// `${config.development.password}`,
+export const db = new Sequelize(process.env.URI, {
+    database: `${config.development.database}`,
+    username: `${config.development.username}`,
+    password: `${config.development.password}`,
+    ssl: true,
+    dialect: 'postgres',
+    host: config.development.host,
+    logging: false,
+    pool: {
+        max: 5,
+        min: 0,
+        idle: 10000,
+    }
+});

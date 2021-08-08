@@ -1,13 +1,13 @@
 import express, { Express, Request, Response } from 'express';
+import dotenv from 'dotenv';
+dotenv.config();
 import bodyParser from 'body-parser';
 import helmet from 'helmet';
-import dotenv from 'dotenv';
 import Job from './cron/cron.job';
 import { ERROR_MESSAGE } from './constants/common.constant';
 import { db } from './config/db.config';
 import { getWeatherAndStations, getWeatherAndStationsBetweenDates } from './index.service';
 
-dotenv.config();
 const PORT = process.env.PORT || 3000;
 const app: Express = express();
 

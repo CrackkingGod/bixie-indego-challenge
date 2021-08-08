@@ -1,5 +1,6 @@
 import moment from 'moment';
 import { Op } from 'sequelize';
+import { ERROR_MESSAGE } from './constants/common.constant';
 import { StationsWeatherDetails } from './models/StationsWeatherDetails';
 
 export const getWeatherAndStations = async (at: string, kioskId: number = undefined) => {
@@ -14,7 +15,7 @@ export const getWeatherAndStations = async (at: string, kioskId: number = undefi
             raw: true,
         });
         if (!stationAndWeatherDetails) {
-            throw new Error('No Data found.');
+            throw new Error(ERROR_MESSAGE.NotFound);
         }
 
         let bikeStationsData = stationAndWeatherDetails?.allStationsData;
@@ -26,7 +27,7 @@ export const getWeatherAndStations = async (at: string, kioskId: number = undefi
             });
         }
         if (!bikeStationsData) {
-            throw new Error('No Data found for given kioskId.');
+            throw new Error(ERROR_MESSAGE.NotFound);
         }
 
         return {
@@ -42,19 +43,17 @@ export const getWeatherAndStations = async (at: string, kioskId: number = undefi
 
 export const getWeatherAndStationsBetweenDates = async (from: string, to: string, kioskId: number = undefined, frequency) => {
     try {
-        // check if date_to is greater than today and give error
-        frequency = (frequency === 'daily' ? 'd' : 'h');
-
-        // console.log("from : ", moment.utc(from).add(1, `${frequency}` as any).format());
-        // console.log("from : ", moment.utc(to).format());
-
         from = moment.utc(from).format();
         to = moment.utc(to).format();
 
-        // get createdAt for that value
+        // check if date_to is greater than today and give error
+        if (moment.utc(from).isSameOrAfter(moment.utc(to))) {
+            throw new Error(ERROR_MESSAGE.BadRequest);
+        }
+        frequency = (frequency === 'daily' ? 'd' : 'h');
+
         const resultList = [];
         for (let frequencyFrom = moment.utc(from); frequencyFrom.isSameOrBefore(to); frequencyFrom.add(1, frequency)) {
-            // console.log(frequencyFrom.format(), moment(frequencyFrom).add(1, frequency).format());
 
             const stationAndWeatherDetails: any = await StationsWeatherDetails.findOne({
                 attributes: ['id', 'createdAt', 'allStationsData', 'weatherData'],

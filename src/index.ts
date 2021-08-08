@@ -5,8 +5,6 @@ import dotenv from 'dotenv';
 import Job from './cron/cron.job';
 import { ERROR_MESSAGE } from './constants/common.constant';
 import { db } from './config/db.config';
-import { StationsWeatherDetails } from './models/StationsWeatherDetails';
-import { Op } from 'sequelize';
 import { getWeatherAndStations, getWeatherAndStationsBetweenDates } from './index.service';
 
 dotenv.config();

@@ -4,7 +4,6 @@ import { StationsWeatherDetails } from '../models/StationsWeatherDetails';
 import { CRON_EXPRESSION_5_MIN } from '../constants/common.constant';
 
 export default new CronJob(CRON_EXPRESSION_5_MIN, async () => {
-	console.log('You will see this message every 5 minute');
 	const cityName = 'Philadelphia';
 	const bikeStationsData = await (await axios.get('https://kiosks.bicycletransit.workers.dev/phl')).data;
 
@@ -15,5 +14,5 @@ export default new CronJob(CRON_EXPRESSION_5_MIN, async () => {
 		weatherData,
 		createdAt: new Date().toISOString(),
 	});
-	console.log(addedData.get()?.id);
+	console.log('New Data Added At : ', new Date().toISOString());
 }, null, true, 'America/Los_Angeles');

@@ -1,6 +1,7 @@
 import moment from 'moment';
 import { Op } from 'sequelize';
-import { ERROR_MESSAGE } from './constants/common.constant';
+import { ApiError } from './constants/api.error';
+import { ERROR_MESSAGE, HTTP_STATUS_CODES } from './constants/common.constant';
 import { StationsWeatherDetails } from './models/StationsWeatherDetails';
 
 export const getWeatherAndStations = async (at: string, kioskId: number = undefined) => {
@@ -15,7 +16,7 @@ export const getWeatherAndStations = async (at: string, kioskId: number = undefi
             raw: true,
         });
         if (!stationAndWeatherDetails) {
-            throw new Error(ERROR_MESSAGE.NotFound);
+            throw new ApiError(false, HTTP_STATUS_CODES.NotFound, ERROR_MESSAGE.NotFound);
         }
 
         let bikeStationsData = stationAndWeatherDetails?.allStationsData;
@@ -27,7 +28,7 @@ export const getWeatherAndStations = async (at: string, kioskId: number = undefi
             });
         }
         if (!bikeStationsData) {
-            throw new Error(ERROR_MESSAGE.NotFound);
+            throw new ApiError(false, HTTP_STATUS_CODES.NotFound, ERROR_MESSAGE.NotFound);
         }
 
         return {
@@ -37,18 +38,22 @@ export const getWeatherAndStations = async (at: string, kioskId: number = undefi
         }
 
     } catch (error) {
-        return null;
+        return {
+            status: error?.status,
+            statusCode: error?.statusCode,
+            message: error?.message
+        };
     }
 };
 
-export const getWeatherAndStationsBetweenDates = async (from: string, to: string, kioskId: number = undefined, frequency) => {
+export const getWeatherAndStationsBetweenDates = async (from: string, to: string, kioskId: number = undefined, frequency): Promise<any> => {
     try {
         from = moment.utc(from).format();
         to = moment.utc(to).format();
 
         // check if date_to is greater than today and give error
         if (moment.utc(from).isSameOrAfter(moment.utc(to))) {
-            throw new Error(ERROR_MESSAGE.BadRequest);
+            throw new ApiError(false, HTTP_STATUS_CODES.BadRequest, ERROR_MESSAGE.BadRequest);
         }
         frequency = (frequency === 'daily' ? 'd' : 'h');
 
@@ -59,6 +64,7 @@ export const getWeatherAndStationsBetweenDates = async (from: string, to: string
                 attributes: ['id', 'createdAt', 'allStationsData', 'weatherData'],
                 where: {
                     createdAt: {
+                        // Below line for data needed strictly between the frequency interval
                         // [Op.between]: [frequencyFrom.format(), moment(frequencyFrom).add(1, frequency).format()]
                         [Op.gte]: frequencyFrom.format(),
                     }
@@ -72,16 +78,23 @@ export const getWeatherAndStationsBetweenDates = async (from: string, to: string
                 const bikeStationsData = stationAndWeatherDetails?.allStationsData?.features.find(station => {
                     return station.properties.kioskId === kioskId;
                 });
-                resultList.push({
-                    at: stationAndWeatherDetails.createdAt,
-                    stations: bikeStationsData,
-                    weather: stationAndWeatherDetails?.weatherData,
-                });
+                if (bikeStationsData) {
+                    resultList.push({
+                        at: stationAndWeatherDetails.createdAt,
+                        stations: bikeStationsData,
+                        weather: stationAndWeatherDetails?.weatherData,
+                    });
+                }
+
             }
         }
         return resultList;
 
     } catch (error) {
-        return null;
+        return {
+            status: error?.status,
+            statusCode: error?.statusCode,
+            message: error?.message
+        };
     }
 };

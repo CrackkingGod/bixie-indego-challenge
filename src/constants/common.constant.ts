@@ -5,3 +5,10 @@ export const ERROR_MESSAGE = {
 	Internal_Error: 'Internal Server Error',
 	NotFound: 'Data Not Found',
 }
+
+export const HTTP_STATUS_CODES = {
+	Ok: 200,
+	BadRequest: 400,
+	NotFound: 404,
+	InternalServer: 500
+}

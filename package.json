@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "rimraf dist && tsc",
+    "tsc": "tsc",
+    "build": "rimraf dist && npm run tsc",
     "preserve": "npm run build",
     "serve": "cross-env NODE_ENV=development concurrently \"tsc --watch\" \"nodemon -q dist/index.js\"",
     "prestart": "npm run build",
